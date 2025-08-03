@@ -1,0 +1,27 @@
+﻿version: '3.8'
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - techchallenge-net
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"     # Porta padr�o do RabbitMQ
+      - "15672:15672"   # Interface de administra��o
+    networks:
+      - techchallenge-net
+
+volumes:
+  mongo_data:
+
+networks:
+  techchallenge-net:
+    driver: bridge

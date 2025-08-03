@@ -17,9 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TechChallenge.Application\TechChallenge.Application.csproj" />
-    <ProjectReference Include="..\TechChallenge.Infrastructure\TechChallenge.Infrastructure.csproj" />
-    <ProjectReference Include="..\TechChallgen.Domain\TechChallenge.Domain.csproj" />
+    <ProjectReference Include="..\..\src\TechChallenge.Application\TechChallenge.Application.csproj" />
+    <ProjectReference Include="..\..\src\TechChallenge.Infrastructure\TechChallenge.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\TechChallgen.Domain\TechChallenge.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
