@@ -12,6 +12,7 @@ namespace TechChallenge.Tests.Api.Controllers
     {
         private readonly IDispatcher _dispatcherMock;
         private readonly ProductController _controller;
+        private string _productId = Guid.NewGuid().ToString();
 
         public ProductControllerTests()
         {
@@ -44,14 +45,13 @@ namespace TechChallenge.Tests.Api.Controllers
         public async Task GetByIdAsync_ProductExists_ReturnsOk()
         {
             // Arrange
-            var productId = Guid.NewGuid();
             var expectedProduct = new Product("Nome", "SKU", "Desc", 10, 5);
-            var query = new GetProductByIdQuery(productId);
+            var query = new GetProductByIdQuery(_productId);
 
             _dispatcherMock.SendAsync(query).Returns(expectedProduct);
 
             // Act
-            var result = await _controller.GetByIdAsync(productId);
+            var result = await _controller.GetByIdAsync(_productId);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
@@ -62,13 +62,12 @@ namespace TechChallenge.Tests.Api.Controllers
         public async Task GetByIdAsync_ProductNotFound_ReturnsNotFound()
         {
             // Arrange
-            var productId = Guid.NewGuid();
-            var query = new GetProductByIdQuery(productId);
+            var query = new GetProductByIdQuery(_productId);
 
             _dispatcherMock.SendAsync(query).Returns((Product?)null);
 
             // Act
-            var result = await _controller.GetByIdAsync(productId);
+            var result = await _controller.GetByIdAsync(_productId);
 
             // Assert
             Assert.IsType<NotFoundResult>(result);
@@ -78,11 +77,11 @@ namespace TechChallenge.Tests.Api.Controllers
         public async Task UpdateAsync_IdMismatch_ReturnsBadRequest()
         {
             // Arrange
-            var command = new UpdateProductCommand(Guid.NewGuid(), "Nome", "SKU", 10, 100);
+            var command = new UpdateProductCommand(_productId, "Nome", "SKU", 10, 100);
             var routeId = Guid.NewGuid(); // diferente do command.Id
 
             // Act
-            var result = await _controller.UpdateAsync(routeId, command);
+            var result = await _controller.UpdateAsync(_productId, command);
 
             // Assert
             var badRequest = Assert.IsType<BadRequestObjectResult>(result);
@@ -93,29 +92,27 @@ namespace TechChallenge.Tests.Api.Controllers
         public async Task UpdateAsync_ValidCommand_ReturnsNoContent_WhenUpdated()
         {
             // Arrange
-            var id = Guid.NewGuid();
-            var command = new UpdateProductCommand(id, "Nome", "SKU", 10, 5);
+            var command = new UpdateProductCommand(_productId, "Nome", "SKU", 10, 5);
 
             _dispatcherMock.SendAsync(command).Returns(true);
 
             // Act
-            var result = await _controller.UpdateAsync(id, command);
+            var result = await _controller.UpdateAsync(_productId, command);
 
             // Assert
             Assert.IsType<NoContentResult>(result);
         }
 
-        [Fact]
+        [Fact] 
         public async Task UpdateAsync_NotFound_ReturnsNotFound()
         {
             // Arrange
-            var id = Guid.NewGuid();
-            var command = new UpdateProductCommand(id, "Nome", "SKU", 10, 5);
+            var command = new UpdateProductCommand(_productId, "Nome", "SKU", 10, 5);
 
             _dispatcherMock.SendAsync(command).Returns(false);
 
             // Act
-            var result = await _controller.UpdateAsync(id, command);
+            var result = await _controller.UpdateAsync(_productId, command);
 
             // Assert
             Assert.IsType<NotFoundResult>(result);
@@ -125,13 +122,12 @@ namespace TechChallenge.Tests.Api.Controllers
         public async Task DeleteAsync_ExistingProduct_ReturnsNoContent()
         {
             // Arrange
-            var id = Guid.NewGuid();
-            var command = new DeleteProductCommand(id);
+            var command = new DeleteProductCommand(_productId);
 
             _dispatcherMock.SendAsync(command).Returns(true);
 
             // Act
-            var result = await _controller.DeleteAsync(id);
+            var result = await _controller.DeleteAsync(_productId);
 
             // Assert
             Assert.IsType<NoContentResult>(result);
@@ -141,13 +137,12 @@ namespace TechChallenge.Tests.Api.Controllers
         public async Task DeleteAsync_NotFound_ReturnsNotFound()
         {
             // Arrange
-            var id = Guid.NewGuid();
-            var command = new DeleteProductCommand(id);
+            var command = new DeleteProductCommand(_productId);
 
             _dispatcherMock.SendAsync(command).Returns(false);
 
             // Act
-            var result = await _controller.DeleteAsync(id);
+            var result = await _controller.DeleteAsync(_productId);
 
             // Assert
             Assert.IsType<NotFoundResult>(result);

@@ -9,6 +9,7 @@ namespace TechChallenge.Tests.Application.UseCases
     {
         private readonly IProductRepository _repositoryMock;
         private readonly ProductService _service;
+        private string _productId = Guid.NewGuid().ToString();
 
         public ProductServiceTests()
         {
@@ -54,15 +55,14 @@ namespace TechChallenge.Tests.Application.UseCases
         public async Task GetByIdAsync_Returns_Null_When_Not_Found()
         {
             // Arrange
-            var id = Guid.NewGuid();
-            _repositoryMock.GetByIdAsync(id).Returns((Product?)null);
+            _repositoryMock.GetByIdAsync(_productId).Returns((Product?)null);
 
             // Act
-            var result = await _service.GetByIdAsync(id);
+            var result = await _service.GetByIdAsync(_productId);
 
             // Assert
             Assert.Null(result);
-            await _repositoryMock.Received(1).GetByIdAsync(id);
+            await _repositoryMock.Received(1).GetByIdAsync(_productId);
         }
 
         [Fact]
@@ -83,18 +83,17 @@ namespace TechChallenge.Tests.Application.UseCases
         public async Task UpdateAsync_Returns_True_When_Product_Exists_And_Updates()
         {
             // Arrange
-            var id = Guid.NewGuid();
             var existingProduct = new Product("Produto Existente", "SKUEX", "Desc", 50, 20);
             var updatedProduct = new Product("Produto Atualizado", "SKUEX", "Desc Atualizada", 60, 25);
 
-            _repositoryMock.GetByIdAsync(id).Returns(existingProduct);
+            _repositoryMock.GetByIdAsync(_productId).Returns(existingProduct);
 
             // Act
-            var result = await _service.UpdateAsync(id, updatedProduct);
+            var result = await _service.UpdateAsync(_productId, updatedProduct);
 
             // Assert
             Assert.True(result);
-            await _repositoryMock.Received(1).GetByIdAsync(id);
+            await _repositoryMock.Received(1).GetByIdAsync(_productId);
             await _repositoryMock.Received(1).UpdateAsync(existingProduct);
             
             // Verifica se propriedades foram atualizadas
@@ -108,17 +107,16 @@ namespace TechChallenge.Tests.Application.UseCases
         public async Task UpdateAsync_Returns_False_When_Product_Not_Found()
         {
             // Arrange
-            var id = Guid.NewGuid();
             var updatedProduct = new Product("Produto Atualizado", "SKUEX", "Desc Atualizada", 60, 25);
 
-            _repositoryMock.GetByIdAsync(id).Returns((Product?)null);
+            _repositoryMock.GetByIdAsync(_productId).Returns((Product?)null);
 
             // Act
-            var result = await _service.UpdateAsync(id, updatedProduct);
+            var result = await _service.UpdateAsync(_productId, updatedProduct);
 
             // Assert
             Assert.False(result);
-            await _repositoryMock.Received(1).GetByIdAsync(id);
+            await _repositoryMock.Received(1).GetByIdAsync(_productId);
             await _repositoryMock.DidNotReceive().UpdateAsync(Arg.Any<Product>());
         }
 
@@ -126,33 +124,31 @@ namespace TechChallenge.Tests.Application.UseCases
         public async Task DeleteAsync_Returns_True_When_Product_Exists_And_Deletes()
         {
             // Arrange
-            var id = Guid.NewGuid();
             var existingProduct = new Product("Produto Existente", "SKUEX", "Desc", 50, 20);
-            _repositoryMock.GetByIdAsync(id).Returns(existingProduct);
+            _repositoryMock.GetByIdAsync(_productId).Returns(existingProduct);
 
             // Act
-            var result = await _service.DeleteAsync(id);
+            var result = await _service.DeleteAsync(_productId);
 
             // Assert
             Assert.True(result);
-            await _repositoryMock.Received(1).GetByIdAsync(id);
-            await _repositoryMock.Received(1).DeleteAsync(id);
+            await _repositoryMock.Received(1).GetByIdAsync(_productId);
+            await _repositoryMock.Received(1).DeleteAsync(_productId);
         }
 
         [Fact]
         public async Task DeleteAsync_Returns_False_When_Product_Not_Found()
         {
             // Arrange
-            var id = Guid.NewGuid();
-            _repositoryMock.GetByIdAsync(id).Returns((Product?)null);
+            _repositoryMock.GetByIdAsync(_productId).Returns((Product?)null);
 
             // Act
-            var result = await _service.DeleteAsync(id);
+            var result = await _service.DeleteAsync(_productId);
 
             // Assert
             Assert.False(result);
-            await _repositoryMock.Received(1).GetByIdAsync(id);
-            await _repositoryMock.DidNotReceive().DeleteAsync(id);
+            await _repositoryMock.Received(1).GetByIdAsync(_productId);
+            await _repositoryMock.DidNotReceive().DeleteAsync(_productId);
         }
     }
 }

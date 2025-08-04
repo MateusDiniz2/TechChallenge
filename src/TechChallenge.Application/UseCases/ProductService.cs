@@ -18,7 +18,7 @@ namespace TechChallenge.Application.UseCases
             return await _productRepository.GetAllAsync();
         }
 
-        public async Task<Product?> GetByIdAsync(Guid id)
+        public async Task<Product?> GetByIdAsync(string id)
         {
             return await _productRepository.GetByIdAsync(id);
         }
@@ -29,7 +29,7 @@ namespace TechChallenge.Application.UseCases
             return product;
         }
 
-        public async Task<bool> UpdateAsync(Guid id, Product updatedProduct)
+        public async Task<bool> UpdateAsync(string id, Product updatedProduct)
         {
             var existingProduct = await _productRepository.GetByIdAsync(id);
             if (existingProduct == null)
@@ -47,7 +47,7 @@ namespace TechChallenge.Application.UseCases
             return true;
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task<bool> DeleteAsync(string id)
         {
             var existing = await _productRepository.GetByIdAsync(id);
             if (existing == null)

@@ -10,4 +10,8 @@
     <Folder Include="Aggregates\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MongoDB.Bson" Version="3.4.2" />
+  </ItemGroup>
+
 </Project>

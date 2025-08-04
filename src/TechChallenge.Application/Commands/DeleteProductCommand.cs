@@ -4,9 +4,9 @@ namespace TechChallenge.Application.Commands
 {
     public class DeleteProductCommand : IRequest<bool>
     {
-        public Guid Id { get; }
+        public string Id { get; }
 
-        public DeleteProductCommand(Guid id)
+        public DeleteProductCommand(string id)
         {
             Id = id;
         }

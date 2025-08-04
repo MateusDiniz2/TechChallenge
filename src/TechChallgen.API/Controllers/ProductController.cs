@@ -25,7 +25,7 @@ namespace TechChallenge.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetByIdAsync(Guid id)
+        public async Task<IActionResult> GetByIdAsync(string id)
         {
             var query = new GetProductByIdQuery(id);
             var product = await _dispatcher.SendAsync(query);
@@ -38,11 +38,13 @@ namespace TechChallenge.API.Controllers
         public async Task<IActionResult> CreateAsync([FromBody] CreateProductCommand command)
         {
             var product = await _dispatcher.SendAsync(command);
-            return CreatedAtAction(nameof(GetByIdAsync), new { id = product.Id }, product);
+            if (product == null)
+                return NotFound();
+            return Ok(product);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] UpdateProductCommand command)
+        public async Task<IActionResult> UpdateAsync(string id, [FromBody] UpdateProductCommand command)
         {
             if (id != command.Id)
                 return BadRequest("Id da rota diferente do id do comando.");
@@ -52,7 +54,7 @@ namespace TechChallenge.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(Guid id)
+        public async Task<IActionResult> DeleteAsync(string id)
         {
             var command = new DeleteProductCommand(id);
             var deleted = await _dispatcher.SendAsync(command);

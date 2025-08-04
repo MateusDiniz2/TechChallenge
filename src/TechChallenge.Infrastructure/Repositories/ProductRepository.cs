@@ -18,7 +18,7 @@ namespace TechChallenge.Infrastructure.Repositories
             return await _collection.Find(_ => true).ToListAsync();
         }
 
-        public async Task<Product?> GetByIdAsync(Guid id)
+        public async Task<Product?> GetByIdAsync(string id)
         {
             return await _collection.Find(p => p.Id == id).FirstOrDefaultAsync();
         }
@@ -33,7 +33,7 @@ namespace TechChallenge.Infrastructure.Repositories
             await _collection.ReplaceOneAsync(p => p.Id == product.Id, product);
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(string id)
         {
             await _collection.DeleteOneAsync(p => p.Id == id);
         }

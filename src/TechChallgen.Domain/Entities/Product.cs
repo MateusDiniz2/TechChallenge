@@ -1,10 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace TechChallenge.Domain.Entities;
 
 public class Product
 {
-    public Guid Id { get; private set; }
+    [BsonId]
+    [BsonRepresentation(BsonType.String)]
+    public string Id { get; set; } = Guid.NewGuid().ToString();
 
     [Required(ErrorMessage = "O nome do produto é obrigatório.")]
     [StringLength(100, ErrorMessage = "O nome deve ter no máximo 100 caracteres.")]
@@ -25,7 +29,7 @@ public class Product
 
     public Product(string name, string sku, string description, decimal price, int stockQuantity)
     {
-        Id = Guid.NewGuid();
+        Id = Guid.NewGuid().ToString();
         Name = name;
         Sku = sku;
         Description = description;

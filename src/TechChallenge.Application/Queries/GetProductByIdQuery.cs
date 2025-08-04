@@ -5,9 +5,9 @@ namespace TechChallenge.Application.Queries
 {
     public class GetProductByIdQuery : IRequest<Product?>
     {
-        public Guid Id { get; }
+        public string Id { get; }
 
-        public GetProductByIdQuery(Guid id)
+        public GetProductByIdQuery(string id)
         {
             Id = id;
         }
