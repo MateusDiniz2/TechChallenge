@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TechChallenge.Application.Commands;
 using TechChallenge.Application.Interfaces;
-using TechChallenge.Application.UseCases;
-using TechChallenge.Domain.Entities;
+using TechChallenge.Application.Queries;
 
 namespace TechChallenge.API.Controllers
 {
@@ -9,51 +9,53 @@ namespace TechChallenge.API.Controllers
     [Route("api/[controller]")]
     public class ProductController : ControllerBase
     {
-        private readonly IProductService _productService;
+        private readonly IDispatcher _dispatcher;
 
-        public ProductController(IProductService productService)
+        public ProductController(IDispatcher dispatcher)
         {
-            _productService = productService;
+            _dispatcher = dispatcher;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            var result = await _productService.GetAllAsync();
-            return Ok(result);
+            var query = new GetAllProductsQuery();
+            var products = await _dispatcher.SendAsync(query);
+            return Ok(products);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync(Guid id)
         {
-            var result = await _productService.GetByIdAsync(id);
-            return result is null ? NotFound() : Ok(result);
+            var query = new GetProductByIdQuery(id);
+            var product = await _dispatcher.SendAsync(query);
+            if (product == null)
+                return NotFound();
+            return Ok(product);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] Product product)
+        public async Task<IActionResult> CreateAsync([FromBody] CreateProductCommand command)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var result = await _productService.CreateAsync(product);
-            return CreatedAtAction(nameof(GetByIdAsync), new { id = result.Id }, result);
+            var product = await _dispatcher.SendAsync(command);
+            return CreatedAtAction(nameof(GetByIdAsync), new { id = product.Id }, product);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] Product product)
+        public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] UpdateProductCommand command)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (id != command.Id)
+                return BadRequest("Id da rota diferente do id do comando.");
 
-            var updated = await _productService.UpdateAsync(id, product);
+            var updated = await _dispatcher.SendAsync(command);
             return updated ? NoContent() : NotFound();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(Guid id)
         {
-            var deleted = await _productService.DeleteAsync(id);
+            var command = new DeleteProductCommand(id);
+            var deleted = await _dispatcher.SendAsync(command);
             return deleted ? NoContent() : NotFound();
         }
     }

@@ -9,7 +9,7 @@ builder.Services.AddRazorPages();
 
 //configuracao de dependencias dos projetos
 
-builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddInfrastructure();
 builder.Services.AddApplication();
 
 

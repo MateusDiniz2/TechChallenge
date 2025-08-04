@@ -1,7 +1,7 @@
-﻿using TechChallenge.Application.Commands;
-using TechChallenge.Application.Interfaces;
-using TechChallenge.Domain.Entities;
+﻿using TechChallenge.Domain.Entities;
 using TechChallenge.Domain.Interfaces;
+using TechChallenge.Application.Interfaces;
+using TechChallenge.Application.Commands;
 
 namespace TechChallenge.Application.Handlers
 {
