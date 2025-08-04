@@ -1,6 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace TechChallenge.Domain.Entities;
 
@@ -10,20 +11,25 @@ public class Product
     [BsonRepresentation(BsonType.String)]
     public string Id { get; set; } = Guid.NewGuid().ToString();
 
+    [JsonPropertyName("name")]
     [Required(ErrorMessage = "O nome do produto é obrigatório.")]
     [StringLength(100, ErrorMessage = "O nome deve ter no máximo 100 caracteres.")]
     public string Name { get; private set; }
 
+    [JsonPropertyName("sku")]
     [Required(ErrorMessage = "O SKU do produto é obrigatório.")]
     [StringLength(50, ErrorMessage = "O SKU deve ter no máximo 50 caracteres.")]
     public string Sku { get; private set; }
 
+    [JsonPropertyName("description")]
     [StringLength(500, ErrorMessage = "A descrição deve ter no máximo 500 caracteres.")]
     public string Description { get; private set; }
 
+    [JsonPropertyName("price")]
     [Range(0, double.MaxValue, ErrorMessage = "O preço deve ser maior ou igual a zero.")]
     public decimal Price { get; private set; }
 
+    [JsonPropertyName("ttockQuantity")]
     [Range(0, int.MaxValue, ErrorMessage = "A quantidade em estoque deve ser maior ou igual a zero.")]
     public int StockQuantity { get; private set; }
 

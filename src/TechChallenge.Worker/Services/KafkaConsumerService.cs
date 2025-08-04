@@ -1,15 +1,20 @@
 ﻿using Confluent.Kafka;
+using System.Text.Json;
+using TechChallenge.Application.Interfaces;
+using TechChallenge.Domain.Entities;
 
 namespace TechChallenge.Worker.Services
 {
     public class KafkaConsumerService : BackgroundService
     {
         private readonly ILogger<KafkaConsumerService> _logger;
+        private readonly IServiceScopeFactory _scopeFactory;
         private readonly IConsumer<Ignore, string> _consumer;
 
-        public KafkaConsumerService(ILogger<KafkaConsumerService> logger)
+        public KafkaConsumerService(ILogger<KafkaConsumerService> logger, IServiceScopeFactory scopeFactory)
         {
             _logger = logger;
+            _scopeFactory = scopeFactory;
 
             var config = new ConsumerConfig
             {
@@ -22,33 +27,47 @@ namespace TechChallenge.Worker.Services
             _consumer.Subscribe("products-topic");
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            return Task.Run(() =>
+            while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
-                    while (!stoppingToken.IsCancellationRequested)
-                    {
-                        var consumeResult = _consumer.Consume(stoppingToken);
+                    var consumeResult = _consumer.Consume(stoppingToken);
+                    var message = consumeResult.Message.Value;
 
-                        if (consumeResult != null)
-                        {
-                            var message = consumeResult.Message.Value;
-                            _logger.LogInformation("Mensagem consumida do Kafka: {Message}", message);
-                            Console.WriteLine($"Mensagem consumida do Kafka: {message}");
-                        }
+                    _logger.LogInformation("Mensagem consumida do Kafka: {Message}", message);
+
+                    using var scope = _scopeFactory.CreateScope();
+                    var productService = scope.ServiceProvider.GetRequiredService<IProductService>();
+
+                    var product = JsonSerializer.Deserialize<Product>(message, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    if (product != null)
+                    {
+                        await productService.CreateAsync(product);
                     }
+                }
+                catch (ConsumeException ex)
+                {
+                    _logger.LogError(ex, "Erro ao consumir mensagem do Kafka.");
                 }
                 catch (OperationCanceledException)
                 {
-                    
+                    _logger.LogInformation("Cancelando consumo Kafka...");
+                    break;
                 }
-                finally
+                catch (Exception ex)
                 {
-                    _consumer.Close();
+                    _logger.LogError(ex, "Erro inesperado no consumidor Kafka.");
                 }
-            }, stoppingToken);
+            }
+
+            _consumer.Close(); // Fecha a conexão ao encerrar o serviço
         }
     }
+
 }
