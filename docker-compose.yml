@@ -1,4 +1,5 @@
 ﻿version: '3.8'
+
 services:
   mongo:
     image: mongo:latest
@@ -10,12 +11,29 @@ services:
     networks:
       - techchallenge-net
 
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
     ports:
-      - "5672:5672"     # Porta padr�o do RabbitMQ
-      - "15672:15672"   # Interface de administra��o
+      - "2181:2181"
+    networks:
+      - techchallenge-net
+
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: localhost
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://localhost:9093
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
     networks:
       - techchallenge-net
 
