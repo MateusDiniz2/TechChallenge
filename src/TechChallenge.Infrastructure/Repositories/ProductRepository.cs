@@ -23,7 +23,7 @@ namespace TechChallenge.Infrastructure.Repositories
             return await _collection.Find(p => p.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task AddAsync(Product product)
+        public async Task CreateAsync(Product product)
         {
             await _collection.InsertOneAsync(product);
         }
