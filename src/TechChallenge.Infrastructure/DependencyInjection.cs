@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using TechChallenge.Domain.Interfaces;
 using TechChallenge.Infrastructure.Context;
 using TechChallenge.Infrastructure.Messaging;
@@ -18,6 +19,9 @@ public static class DependencyInjection
             var context = sp.GetRequiredService<MongoDbContext>();
             return context.Database;
         });
+
+        services.AddDbContext<ProductDbContext>(options =>
+                options.UseInMemoryDatabase("TechChallengeDb"));
 
         services.AddSingleton<IKafkaProducer>(sp =>
                 new KafkaProducer("localhost:9092", "products-topic"));
