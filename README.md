@@ -1,4 +1,4 @@
-# Projeto de Exemplo - Microsserviço com .NET 8, MongoDB e Kafka
+# Desafio Técnico - Microsserviço com .NET 8, MongoDB e Kafka
 
 Este projeto é um microsserviço criado com .NET 8, estruturado utilizando DDD (Domain-Driven Design), com suporte a MongoDB, Apache Kafka, testes unitários com xUnit e arquitetura baseada em CQRS com Dispatcher.
 
