@@ -32,3 +32,8 @@ docker ps -> verifica os containers que estão sendo executados.
 ## A API estará disponível em:
 
 http://localhost:5207 (ou porta configurada no launchSettings.json)
+
+## Visualizacao MongoDB
+
+Necessário instalação de uma IDE, ex MongoDBCompass. 
+Após instalação, só connectar com a connectionstring localizada no AppSettings do projeto.
